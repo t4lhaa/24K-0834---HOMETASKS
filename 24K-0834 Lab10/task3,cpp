@@ -1,0 +1,96 @@
+#include <iostream>
+using namespace std;
+
+
+struct Task {
+    char name;
+    int priority;
+};
+
+class MaxHeap {
+    Task heap[10];
+    int size;
+
+    int parent(int i) {
+         return (i - 1) / 2;
+         }
+    int leftChild(int i) {
+         return 2 * i + 1;
+         }
+    int rightChild(int i) {
+         return 2 * i + 2;
+         }
+
+    void heapifyUp(int index) {
+        while (index != 0 && heap[parent(index)].priority < heap[index].priority) {
+            swap(heap[parent(index)], heap[index]);
+            index = parent(index);
+        }
+    }
+
+    void heapifyDown(int index) {
+        int left = leftChild(index);
+        int right = rightChild(index);
+        int largest = index;
+
+        if (left < size && heap[left].priority > heap[largest].priority){
+            largest = left;
+        }
+        if (right < size && heap[right].priority > heap[largest].priority){
+            largest = right;
+        }
+
+        if (largest != index) {
+            swap(heap[index], heap[largest]);
+            heapifyDown(largest);
+        }
+    }
+
+public:
+    MaxHeap() { 
+        size = 0;
+     }
+
+    void insert(char name, int priority) {
+        if (size==10){
+             return;
+        }
+        heap[size] = {name, priority};
+        heapifyUp(size);
+        size++;
+    }
+
+    Task remove() {
+        if (size <= 0) return {'-', -1};
+        Task maxTask = heap[0];
+        heap[0] = heap[size - 1];
+        size--;
+        heapifyDown(0);
+        return maxTask;
+    }
+
+    void displayHeap() {
+        for (int i = 0; i < size; i++)
+            cout << heap[i].name << "(" << heap[i].priority << ") ";
+        cout << endl;
+    }
+};
+
+int main() {
+    MaxHeap scheduler;
+    scheduler.insert('A', 5);
+    scheduler.insert('B', 3);
+    scheduler.insert('C', 8);
+    cout << "Heap after inserting A(5), B(3), C(8): ";
+    scheduler.displayHeap();
+
+    Task treated = scheduler.remove();
+    
+    cout << "Removed task: " << treated.name << "(" << treated.priority << ")"<<endl;
+    cout << "Heap after removal: ";
+    scheduler.displayHeap();
+    scheduler.insert('D', 6);
+    cout << "Heap after inserting D(6): ";
+    scheduler.displayHeap();
+    return 0;
+}
