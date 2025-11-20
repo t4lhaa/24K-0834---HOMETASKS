@@ -1,0 +1,99 @@
+#include<iostream>
+using namespace std;
+
+
+class MaxHeap {
+    int heap[10];
+    int size;
+
+    int parent(int i) {
+        return (i - 1) / 2;
+    }
+    int leftChild(int i) {
+        return 2 * i + 1;
+     }
+    int rightChild(int i) {
+         return 2 * i + 2;
+     }
+
+    void heapifyUp(int index) {
+        while (index != 0 && heap[parent(index)]<heap[index]) {
+            swap(heap[parent(index)], heap[index]);
+            index = parent(index);
+        }
+    }
+
+     void heapifyDown(int index) {
+        int left = leftChild(index);
+        int right = rightChild(index);
+        int largest = index;
+
+        if (left < size && heap[left] > heap[largest])
+            largest = left;
+        if (right < size && heap[right] > heap[largest])
+            largest = right;
+
+        if (largest != index) {
+            swap(heap[index], heap[largest]);
+            heapifyDown(largest);
+        }
+    }
+
+
+public:
+    MaxHeap(){
+        size = 0;
+    }
+
+    void insert(int priority) {
+        if (size == 10) {
+            cout << "Heap is full!" << endl;
+            return;
+        }
+        heap[size] = priority;
+        heapifyUp(size);
+        size++;
+    }
+
+        int remove() {
+        if (size <= 0){
+             return -1;
+        } 
+        int maxSeverity = heap[0];
+        heap[0] = heap[size - 1];
+        size--;
+        heapifyDown(0);
+        return maxSeverity;
+    }
+
+    void displayHeap() {
+        for (int i = 0; i < size; i++){
+            cout << heap[i] << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    MaxHeap H;
+
+    H.insert(15);
+    H.insert(12);
+    H.insert(8);
+    H.insert(7);
+    H.insert(6);
+
+    cout << "Heap before new patient: ";
+    H.displayHeap();
+
+    H.insert(10);
+    cout << "Heap after adding patient with severity 10: ";
+    H.displayHeap();
+
+    int first = H.remove();
+    cout << "first patient with severity: " <<first<<endl;
+    cout << "Heap after treating highest severity patient: ";
+    H.displayHeap();
+
+    return 0;
+}
